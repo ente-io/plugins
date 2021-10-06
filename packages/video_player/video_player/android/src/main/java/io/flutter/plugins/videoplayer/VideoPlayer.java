@@ -96,6 +96,17 @@ final class VideoPlayer {
     setupVideoPlayer(eventChannel, textureEntry);
   }
 
+  VideoPlayer(
+      EventChannel eventChannel,
+      TextureRegistry.SurfaceTextureEntry textureEntry,
+      VideoPlayerOptions options,
+      SimpleExoPlayer exoPlayer) {
+    this.eventChannel = eventChannel;
+    this.textureEntry = textureEntry;
+    this.options = options;
+    this.exoPlayer = exoPlayer;
+  }
+
   private static boolean isHTTP(Uri uri) {
     if (uri == null || uri.getScheme() == null) {
       return false;
@@ -282,6 +293,12 @@ final class VideoPlayer {
         }
         event.put("width", width);
         event.put("height", height);
+        // Rotating the video with ExoPlayer does not seem to be possible with a Surface,
+        // so inform the Flutter code that the widget needs to be rotated to prevent
+        // upside-down playback.
+        if (rotationDegrees == 180) {
+          event.put("rotationCorrection", Math.PI);
+        }
       }
       eventSink.success(event);
     }

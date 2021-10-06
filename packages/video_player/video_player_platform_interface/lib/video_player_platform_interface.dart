@@ -228,6 +228,7 @@ class VideoEvent {
     required this.eventType,
     this.duration,
     this.size,
+    this.rotationCorrection,
     this.buffered,
   });
 
@@ -243,6 +244,11 @@ class VideoEvent {
   ///
   /// Only used if [eventType] is [VideoEventType.initialized].
   final Size? size;
+  
+  /// Radians to rotate the video so it is displayed correctly.
+  ///
+  /// Only used if [eventType] is [VideoEventType.initialized].
+  final double? rotationCorrection;
 
   /// Buffered parts of the video.
   ///

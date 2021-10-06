@@ -39,6 +39,7 @@ class VideoPlayerValue {
     this.isBuffering = false,
     this.volume = 1.0,
     this.playbackSpeed = 1.0,
+    this.rotationCorrection = 0.0,
     this.errorDescription,
   });
 
@@ -93,6 +94,9 @@ class VideoPlayerValue {
   /// The [size] of the currently loaded video.
   final Size size;
 
+  /// Radians to rotate the video so it is displayed correctly.
+  final double rotationCorrection;
+
   /// Indicates whether or not the video has been loaded and is ready to play.
   final bool isInitialized;
 
@@ -131,6 +135,7 @@ class VideoPlayerValue {
     bool? isBuffering,
     double? volume,
     double? playbackSpeed,
+    double? rotationCorrection,
     String? errorDescription,
   }) {
     return VideoPlayerValue(
@@ -145,6 +150,7 @@ class VideoPlayerValue {
       isBuffering: isBuffering ?? this.isBuffering,
       volume: volume ?? this.volume,
       playbackSpeed: playbackSpeed ?? this.playbackSpeed,
+      rotationCorrection: rotationCorrection ?? this.rotationCorrection,
       errorDescription: errorDescription ?? this.errorDescription,
     );
   }
@@ -341,6 +347,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           value = value.copyWith(
             duration: event.duration,
             size: event.size,
+            rotationCorrection: event.rotationCorrection,
             isInitialized: event.duration != null,
           );
           initializingCompleter.complete(null);
@@ -693,7 +700,10 @@ class _VideoPlayerState extends State<VideoPlayer> {
   Widget build(BuildContext context) {
     return _textureId == VideoPlayerController.kUninitializedTextureId
         ? Container()
-        : _videoPlayerPlatform.buildView(_textureId);
+        : Transform.rotate(
+            angle: widget.controller.value.rotationCorrection,
+            child: _videoPlayerPlatform.buildView(_textureId),
+          );
   }
 }
 
